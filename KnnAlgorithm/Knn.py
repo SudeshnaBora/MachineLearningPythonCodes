@@ -3,11 +3,7 @@ import operator as op
 import matplotlib 
 import matplotlib.pyplot as plt
 
-def createDataSet():
-    group = np.array([[1.0,1.1],[1.0,1.0],[0,0],[0,0.1]])
-    # use the local variable that stores the modules to call a function
-    labels = ['A','A','B','B']
-    return group,labels
+
 
 def classifyKnn(inX,dataSet,labels,k):
     dataSetSize = dataSet.shape[0]
@@ -73,7 +69,7 @@ def ReadData():
                  NoMat[NoIndex,:]= listFromLine[0:3]
                  NoIndex +=1
              Labels.append(listFromLine[-1])
-     return SmallMat,NoMat,LargeMat,propertyMatrix,Labels
+     return propertyMatrix,Labels
     
 def plotting(NoMat,SmallMat,LargeMat):
     fig = plt.figure()
@@ -86,4 +82,29 @@ def plotting(NoMat,SmallMat,LargeMat):
     plt.ylabel("Video Game Duration")
     plt.legend(handles=[a1,a2,a3],loc = 'upper left')
     plt.show()
+    
+def AutoNorm(DataSet):
+    minValues = DataSet.min(0) #columnwise max and min
+    maxValues = DataSet.max(0)
+    ranges = maxValues - minValues #columnwise range
+    normDataSet = np.zeros(np.shape(DataSet)) #make a matrix of 0 to store normalised data
+    normDataSet = DataSet - minValues
+    normDataSet = normDataSet/ranges
+    return normDataSet
+    
+def DatingClassTest():
+    ratio = 0.10
+    datingDataMat,Labels = ReadData()
+    normDataMat = AutoNorm(datingDataMat)
+    m = normDataMat.shape[0]
+    TestLim = int(m*ratio)
+    errorCount = 0.0
+    for i in range(TestLim):
+        ClassfierResult = classifyKnn(normDataMat[i,:],normDataMat[TestLim:m,:],Labels[TestLim:m],3)
+        print "The classfier result is %s" %ClassfierResult
+        print "The real result is %s" %Labels[i]
+        if (ClassfierResult != Labels[i]):
+            errorCount +=1.0
+    print "The Error is %f" %(errorCount/float(TestLim))
+    
 
