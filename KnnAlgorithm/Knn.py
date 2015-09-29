@@ -90,7 +90,7 @@ def AutoNorm(DataSet):
     normDataSet = np.zeros(np.shape(DataSet)) #make a matrix of 0 to store normalised data
     normDataSet = DataSet - minValues
     normDataSet = normDataSet/ranges
-    return normDataSet
+    return normDataSet,ranges,minValues
     
 def DatingClassTest():
     ratio = 0.10
@@ -107,4 +107,14 @@ def DatingClassTest():
             errorCount +=1.0
     print "The Error is %f" %(errorCount/float(TestLim))
     
+def KnnCaller():
+    time = float(raw_input('Time spent in playing video games (in %)'))
+    iceCream = float(raw_input('Amount of ice cream consumed'))
+    flier = float(raw_input('miles flied'))
+    datingDataMat,Labels = ReadData()
+    normDataMat,ranges,minValues = AutoNorm(datingDataMat)
+    inArray = np.array([flier,time,iceCream])
+    
+    result = classifyKnn((inArray-minValues)/ranges,normDataMat,Labels,3)
+    print result    
 
